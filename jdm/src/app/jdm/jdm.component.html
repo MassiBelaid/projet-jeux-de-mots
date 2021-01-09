@@ -10,7 +10,7 @@
 </div>
 
 <div>
-  <p *ngFor="let terme of termes">
-    {{ terme }}
-  </p>
+  <div *ngFor="let terme of termes">
+    {{ terme.terme }} ({{terme.raffinement}})
+  </div>
 </div>

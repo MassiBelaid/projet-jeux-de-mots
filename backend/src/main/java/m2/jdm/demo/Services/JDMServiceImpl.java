@@ -22,7 +22,7 @@ public class JDMServiceImpl implements JDMService{
 
 
     @Override
-    public ArrayList<String> extract(String terme) throws IOException {
+    public Collection<Terme> extract(String terme) throws IOException {
 
         //Contienderont les relations/termes récup de jeux de mots
         Map<Long, Terme> mapTemre = new HashMap<>();
@@ -34,7 +34,7 @@ public class JDMServiceImpl implements JDMService{
         System.out.println("Appel avec le terme  : "+terme);
 
         //Liste des terme en String pour l'affichage
-        ArrayList<String> listTerme = new ArrayList<String>();
+        Map<String, Terme> mapTermes = new HashMap<>();
 
 
         //Lecture à partire d'une URL construite avec le terme
@@ -132,30 +132,44 @@ public class JDMServiceImpl implements JDMService{
                 Terme t1 = mapTemre.get(relation.getTerme1().getId());
                 Terme t2 = mapTemre.get(relation.getTerme2().getId());
 
-
-                //relationsToSave.add(new Relation(t1, t2, relation.getPoids()));
+                Relation rel = new Relation();
+                rel.setTerme1(t1);
+                rel.setTerme2(t2);
+                rel.setPoids(relation.getPoids());
+                relationsToSave.add(rel);
                 if(t1.getTerme().equals(terme)) {
                     t1 = t2;
                 }
 
 
-                /*if(!(t1.getTerme().equals(terme))) {
+                if(!(t1.getTerme().equals(terme))) {
                     //Ajouter tout terme différents de celui recherché dans la liste des termes a sauvegarder
                     //termeToSave.add(new Terme(t1.getId(), t1.getNom(), 0));
-                }*/
+                }
 
                 //Ajout dans la liste de string pour affichage si existe pas deja
-                if(!listTerme.contains(t1.getTerme()))
-                    listTerme.add(t1.getTerme());
+                if(!mapTermes.containsKey(t1.getTerme())) {
+                    String n = t1.getTerme();
+                    if(n.contains(">")){
+                        String tab [] = n.split(">");
+                        t1.setTerme(tab[0]);
+                        t1.setRaffinement(tab[1]);
+                    }
+                    mapTermes.put(t1.getTerme(), t1);
+                    termesToSave.add(t1);
+                }
             }
         }
 
         //Appel pour la sauvegarde dans la bdd
         //saveInBase(relationsToSave, termeToSave);
 
-        System.out.println("taille retour : "+listTerme.size());
+        SaveService saveService = new SaveService(relationsToSave, termesToSave);
+        new Thread(saveService).start();
+
+        System.out.println("taille retour : "+mapTermes.size());
         //Retourne les termes en string pour l'affichage
-        return listTerme;
+        return mapTermes.values();
     }
 
 

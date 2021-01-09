@@ -1,10 +1,12 @@
 package m2.jdm.demo.Controllers;
 
+import m2.jdm.demo.Models.Terme;
 import m2.jdm.demo.Services.JDMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -18,7 +20,7 @@ public class MainControllers {
     @CrossOrigin(origins = "*")
     @GetMapping
     @RequestMapping("{terme}")
-    public List<String> get(@PathVariable String terme){
+    public Collection<Terme> get(@PathVariable String terme){
         try {
             return jdmService.extract(terme);
         } catch (IOException e) {

@@ -1,0 +1,16 @@
+<label for="mot">Entrez un terme</label>
+<div class="row">
+  <div class="col-8">
+    <input type="text" class="form-control" id="mot" [(ngModel)]="mot" (keyup)="chercherJoueur()">
+  </div>
+  <div class="col-4">
+    <button type="button" class="btn btn-primary" (click)="cherche()" >Chercher</button>
+  </div>
+
+</div>
+
+<div>
+  <p *ngFor="let terme of termes">
+    {{ terme }}
+  </p>
+</div>

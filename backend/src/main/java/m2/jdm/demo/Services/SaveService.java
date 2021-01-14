@@ -5,9 +5,11 @@ import m2.jdm.demo.Models.Terme;
 import m2.jdm.demo.Repositories.RelationRepository;
 import m2.jdm.demo.Repositories.TermeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SaveService implements Runnable{
     private List<Relation> relationsToSave;
     private List<Terme> termesToSave;
@@ -18,32 +20,42 @@ public class SaveService implements Runnable{
     @Autowired
     private TermeRepository termeRepository;
 
-    public SaveService(List<Relation> listRel, List<Terme> lisTerm){
-        this.relationsToSave = listRel;
-        this.termesToSave = lisTerm;
-    }
 
     public void run () {
         System.out.println("DEBUT THREAD");
-        for(Relation r : this.relationsToSave) {
-            //System.out.println(r.getId());
-            try {
-                relationRepository.save(r);
-            }catch (NullPointerException e){
-                System.out.println("relation null");
-            }
-        }
-        for (Terme t : this.termesToSave) {
+
+        /*for (Terme t : this.termesToSave) {
             //System.out.println(t.getId());
             try{
                 termeRepository.save(t);
             }catch (NullPointerException e){
-                System.out.println("Terme null");
+                System.out.println("Terme null: "+t.getId());
             }
 
+        }*/
+
+        for(Relation r : this.relationsToSave) {
+            //System.out.println(r.getId());
+            try {
+                //relationRepository.save(r);
+                System.out.println(r.getTerme1().getId());
+                System.out.println(r.getTerme2().getId());
+                termeRepository.save(r.getTerme1());
+                termeRepository.save(r.getTerme2());
+                relationRepository.save(r);
+            }catch (NullPointerException e){
+                System.out.println("relation null: "+r.getId());
+            }
         }
+
         System.out.println("FIN");
     }
 
+    public void setRelationsToSave(List<Relation> relationsToSave) {
+        this.relationsToSave = relationsToSave;
+    }
 
+    public void setTermesToSave(List<Terme> termesToSave) {
+        this.termesToSave = termesToSave;
+    }
 }

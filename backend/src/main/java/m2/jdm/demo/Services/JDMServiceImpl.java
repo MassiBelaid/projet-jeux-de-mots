@@ -3,6 +3,7 @@ package m2.jdm.demo.Services;
 import m2.jdm.demo.Comparator.ComparatorRelation;
 import m2.jdm.demo.Models.Relation;
 import m2.jdm.demo.Models.Terme;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -18,6 +19,9 @@ public class JDMServiceImpl implements JDMService{
 
     private List<Relation> relationsToSave = new ArrayList<>();
     private List<Terme> termesToSave = new ArrayList<Terme>();
+
+    @Autowired
+    private SaveService saveService;
 
 
 
@@ -132,13 +136,10 @@ public class JDMServiceImpl implements JDMService{
                 Terme t1 = mapTemre.get(relation.getTerme1().getId());
                 Terme t2 = mapTemre.get(relation.getTerme2().getId());
 
-                Relation rel = new Relation();
-                rel.setTerme1(t1);
-                rel.setTerme2(t2);
-                rel.setPoids(relation.getPoids());
-                relationsToSave.add(rel);
+
+                Terme ter = t1;
                 if(t1.getTerme().equals(terme)) {
-                    t1 = t2;
+                    ter = t2;
                 }
 
 
@@ -147,28 +148,31 @@ public class JDMServiceImpl implements JDMService{
                     //termeToSave.add(new Terme(t1.getId(), t1.getNom(), 0));
                 }
 
-                //Ajout dans la liste de string pour affichage si existe pas deja
-                if(!mapTermes.containsKey(t1.getTerme())) {
-                    String n = t1.getTerme();
+                    String n = ter.getTerme();
                     if(n.contains(">")){
                         String tab [] = n.split(">");
-                        t1.setTerme(tab[0]);
-                        t1.setRaffinement(tab[1]);
+                        ter.setTerme(tab[0]);
+                        ter.setRaffinement(tab[1]);
                     }
-                    mapTermes.put(t1.getTerme(), t1);
-                    termesToSave.add(t1);
+                if(!mapTermes.containsKey(ter.getTerme())) {
+                    mapTermes.put(ter.getTerme(), ter);
+                    termesToSave.add(ter);
+
+                    Relation rel = new Relation();
+                    rel.setTerme1(t1);
+                    rel.setTerme2(ter);
+                    rel.setPoids(relation.getPoids());
+                    relationsToSave.add(rel);
                 }
             }
         }
 
-        //Appel pour la sauvegarde dans la bdd
-        //saveInBase(relationsToSave, termeToSave);
 
-        SaveService saveService = new SaveService(relationsToSave, termesToSave);
+        saveService.setRelationsToSave(relationsToSave);
+        saveService.setTermesToSave(termesToSave);
         new Thread(saveService).start();
 
         System.out.println("taille retour : "+mapTermes.size());
-        //Retourne les termes en string pour l'affichage
         return mapTermes.values();
     }
 

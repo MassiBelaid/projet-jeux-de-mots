@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/get")
-public class MainControllers {
+public class MainController {
 
     @Autowired
     JDMService jdmService;

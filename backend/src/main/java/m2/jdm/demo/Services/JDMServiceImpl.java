@@ -35,11 +35,11 @@ public class JDMServiceImpl implements JDMService{
 
         //Contienderont les relations/termes récup de jeux de mots
         Map<Long, Terme> mapTemre = new HashMap<>();
-        List< Relation> listRelation = new ArrayList<Relation>();
+        List<Relation> listRelation = new ArrayList<Relation>();
 
 
         //coder le terme avant la recherche
-        terme = this.raffinementTerme(terme);
+        terme = this.encodeTerme(terme);
         System.out.println("Appel avec le terme  : "+terme);
 
         //Liste des terme en String pour l'affichage
@@ -50,7 +50,7 @@ public class JDMServiceImpl implements JDMService{
         String urlString = "http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel="+terme;
         URL url = new URL(urlString);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(),"iso-8859-9"));
 
         String s;
         Boolean existeTerme = false;
@@ -73,7 +73,7 @@ public class JDMServiceImpl implements JDMService{
                     //Ligne d'une relation
                     if(s.charAt(0) == 'r' && s.charAt(1) != 't') {
                         String[] detailelation = s.split(";");
-                        if(Integer.parseInt(detailelation[5]) >= POIDS_TERME_MINIMUM ) {
+                        if(Float.parseFloat(detailelation[5]) >= POIDS_TERME_MINIMUM ) {
                             Relation relation = new Relation();
                             Terme t1 = new Terme();
                             t1.setId(Integer.parseInt(detailelation[2]));
@@ -81,7 +81,7 @@ public class JDMServiceImpl implements JDMService{
                             t2.setId(Integer.parseInt(detailelation[3]));
                             relation.setTerme1(t1);
                             relation.setTerme2(t2);
-                            relation.setPoids(Integer.parseInt(detailelation[5]));
+                            relation.setPoids((int)Float.parseFloat(detailelation[5]));
 
                             listRelation.add(relation);
                         }
@@ -167,7 +167,9 @@ public class JDMServiceImpl implements JDMService{
                     rel.setTerme1(t1);
                     rel.setTerme2(ter);
                     rel.setPoids(relation.getPoids());
-                    relationsToSave.add(rel);
+                    if(!verifyTerme(rel.getTerme1().getTerme()) && !verifyTerme(rel.getTerme2().getTerme())){
+                        relationsToSave.add(rel);
+                    }
                 }
             }
         }
@@ -206,10 +208,19 @@ public class JDMServiceImpl implements JDMService{
     }
 
     //Methode qui régle le terme entré avant la recherche dans JeuxDeMot
-    private String raffinementTerme(String terme) {
+    private String encodeTerme(String terme) {
         terme = terme.toLowerCase();
         terme = terme.trim();
         terme = terme.replace("é","%E9").replace("è","%E8").replace("ê","%EA").replace("à","%E0").replace("ç","%E7").replace("û","%FB").replace(" ","+");
+
+        return terme;
+    }
+
+    //Methode qui régle le terme entré avant la recherche dans JeuxDeMot
+    private String decodeTerme(String terme) {
+        terme = terme.toLowerCase();
+        terme = terme.trim();
+        terme = terme.replace("%E9","é").replace("%E8","è").replace("%EA","ê").replace("%E0","à").replace("%E7","ç").replace("%FB","û").replace("+"," ");
 
         return terme;
     }

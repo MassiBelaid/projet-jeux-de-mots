@@ -1,16 +1,23 @@
-<label for="mot">Entrez un terme</label>
+<label id="searchbarTerme" for="mot">Entrez un terme</label>
 <div class="row">
   <div class="col-8">
-    <input type="text" class="form-control" id="mot" [(ngModel)]="mot" (keyup)="chercherJoueur()">
+    <input type="text" class="form-control" id="mot" [(ngModel)]="mot" (keyup)="chercherTermesCompletion()">
   </div>
   <div class="col-4">
     <button type="button" class="btn btn-primary" (click)="cherche()" >Chercher</button>
   </div>
 
 </div>
-
+<ul class="list-group">
+  <li *ngFor="let terme of termesCompletion" class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="#searchbarTerme" (click)="chercheAvecTerme(terme.terme)">{{ terme.terme }} ({{terme.raffinement}})</a>
+  </li>
+</ul>
+<p *ngFor="let terme of termesDejaUtilises">
+  <a href="#searchbarTerme" (click)="chercheAvecTerme(terme)">{{ terme}}</a>
+ - </p>
 <div>
   <div *ngFor="let terme of termes">
-    {{ terme.terme }} ({{terme.raffinement}})
+    <a href="#searchbarTerme" (click)="chercheAvecTerme(terme.terme)">{{ terme.terme }} ({{terme.raffinement}})</a>
   </div>
 </div>

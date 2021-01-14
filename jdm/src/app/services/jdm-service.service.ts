@@ -13,4 +13,9 @@ export class JdmServiceService {
   get(nom: string): Observable<any> {
     return this.http.get(this.urlBase + '/get/' + nom);
   }
+
+  getTermesCompletion(nom: string): Observable<any> {
+    return this.http.get(this.urlBase + '/terme/' + nom);
+  }
+
 }

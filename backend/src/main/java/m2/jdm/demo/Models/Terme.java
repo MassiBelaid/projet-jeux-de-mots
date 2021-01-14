@@ -53,18 +53,10 @@ public class Terme {
         this.importe = importe;
     }
 
-    public Set<Relation> getSortantes() {
-        return sortantes;
-    }
-
     public void setSortantes(Set<Relation> sortantes) {
         this.sortantes = sortantes;
     }
-
-    public Set<Relation> getEntrantes() {
-        return entrantes;
-    }
-
+    
     public void setEntrantes(Set<Relation> entrantes) {
         this.entrantes = entrantes;
     }

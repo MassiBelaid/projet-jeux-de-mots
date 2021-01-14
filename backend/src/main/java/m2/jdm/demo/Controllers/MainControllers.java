@@ -22,7 +22,7 @@ public class MainControllers {
     @RequestMapping("{terme}")
     public Collection<Terme> get(@PathVariable String terme){
         try {
-            return jdmService.extract(terme);
+            return jdmService.extractWithVerif(terme);
         } catch (IOException e) {
             e.printStackTrace();
         }

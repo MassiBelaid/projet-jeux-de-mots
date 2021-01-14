@@ -3,6 +3,8 @@ package m2.jdm.demo.Services;
 import m2.jdm.demo.Comparator.ComparatorRelation;
 import m2.jdm.demo.Models.Relation;
 import m2.jdm.demo.Models.Terme;
+import m2.jdm.demo.Repositories.RelationRepository;
+import m2.jdm.demo.Repositories.TermeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +25,13 @@ public class JDMServiceImpl implements JDMService{
     @Autowired
     private SaveService saveService;
 
+    @Autowired
+    private TermeRepository termeRepository;
 
+    @Autowired
+    private RelationRepository relationRepository;
 
-    @Override
-    public Collection<Terme> extract(String terme) throws IOException {
+    private Collection<Terme> extract(String terme) throws IOException {
 
         //Contienderont les relations/termes récup de jeux de mots
         Map<Long, Terme> mapTemre = new HashMap<>();
@@ -176,7 +181,29 @@ public class JDMServiceImpl implements JDMService{
         return mapTermes.values();
     }
 
+    @Override
+    public Collection<Terme> extractWithVerif(String terme) throws IOException {
+        if(verifyTerme(terme)){
+            Terme t = termeRepository.findByTermeAndImporte(terme,true).get(0);
+            List<Relation> relList = relationRepository.findByTerme1OrTerme2(t,t);
+            List<Terme> termeList = new ArrayList<>();
 
+            for(Relation rel : relList){
+
+                if(rel.getTerme1().getTerme().equals(terme)){
+                    termeList.add(rel.getTerme2());
+                } else {
+                    termeList.add(rel.getTerme1());
+                }
+
+            }
+
+            return termeList;
+
+        } else {
+            return this.extract(terme);
+        }
+    }
 
     //Methode qui régle le terme entré avant la recherche dans JeuxDeMot
     private String raffinementTerme(String terme) {
@@ -185,5 +212,10 @@ public class JDMServiceImpl implements JDMService{
         terme = terme.replace("é","%E9").replace("è","%E8").replace("ê","%EA").replace("à","%E0").replace("ç","%E7").replace("û","%FB").replace(" ","+");
 
         return terme;
+    }
+
+    //Method qui vérifie si {terme} a déja été importé
+    private boolean verifyTerme(String terme){
+        return termeRepository.findByTermeAndImporte(terme,true).size() > 0 ;
     }
 }

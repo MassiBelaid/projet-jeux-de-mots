@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.Collection;
 
 public interface JDMService {
-    Collection<Terme> extract(String terme) throws IOException;
+    Collection<Terme> extractWithVerif(String terme) throws IOException;
 }

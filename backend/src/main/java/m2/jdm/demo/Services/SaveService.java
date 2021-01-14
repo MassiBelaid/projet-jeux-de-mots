@@ -38,8 +38,7 @@ public class SaveService implements Runnable{
             //System.out.println(r.getId());
             try {
                 //relationRepository.save(r);
-                System.out.println(r.getTerme1().getId());
-                System.out.println(r.getTerme2().getId());
+
                 termeRepository.save(r.getTerme1());
                 termeRepository.save(r.getTerme2());
                 relationRepository.save(r);

@@ -157,7 +157,12 @@ public class JDMServiceImpl implements JDMService{
                     if(n.contains(">")){
                         String tab [] = n.split(">");
                         ter.setTerme(tab[0]);
-                        ter.setRaffinement(tab[1]);
+                        try {
+                            ter.setRaffinement(tab[1]);
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            System.out.println("--------------- ligne pas acceptée :" + n);
+                        }
+
                     }
                 if(!mapTermes.containsKey(ter.getTerme())) {
                     mapTermes.put(ter.getTerme(), ter);

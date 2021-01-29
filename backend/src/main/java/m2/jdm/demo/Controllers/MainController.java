@@ -17,7 +17,7 @@ public class MainController {
     JDMService jdmService;
 
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     @RequestMapping("{terme}")
     public Collection<Terme> get(@PathVariable String terme){

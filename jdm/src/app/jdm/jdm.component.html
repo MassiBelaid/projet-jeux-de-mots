@@ -1,23 +1,39 @@
-<label id="searchbarTerme" for="mot">Entrez un terme</label>
-<div class="row">
-  <div class="col-8">
-    <input type="text" class="form-control" id="mot" [(ngModel)]="mot" (keyup)="chercherTermesCompletion()">
+<div class="row offset-1">
+  <div class="jumbotron col-lg-2">
+    <h2>Historique</h2>
+    <ul *ngFor="let terme of termesDejaUtilises">
+      <li><a href="#searchbarTerme" (click)="chercheAvecTerme(terme)">{{ terme}}</a></li>
+    </ul>
   </div>
-  <div class="col-4">
-    <button type="button" class="btn btn-primary" (click)="cherche()" >Chercher</button>
-  </div>
+  <div class="jumbotron col-lg-8">
+    <h1>Projet Jeu de Mots</h1>
+    <label id="searchbarTerme" for="mot">Entrez un terme</label>
+    <div class="row">
+      <div class="col-8">
+        <input type="text" class="form-control" id="mot" [(ngModel)]="mot" (keyup.enter)="cherche()" (keyup)="chercherTermesCompletion()">
+      </div>
+      <div class="col-4">
+        <button type="button" class="btn btn-primary" (click)="cherche()" >Chercher</button>
+      </div>
 
-</div>
-<ul class="list-group">
-  <li *ngFor="let terme of termesCompletion" class="list-group-item d-flex justify-content-between align-items-center">
-    <a href="#searchbarTerme" (click)="chercheAvecTerme(terme.terme)">{{ terme.terme }} ({{terme.raffinement}})</a>
-  </li>
-</ul>
-<p *ngFor="let terme of termesDejaUtilises">
-  <a href="#searchbarTerme" (click)="chercheAvecTerme(terme)">{{ terme}}</a>
- - </p>
-<div>
-  <div *ngFor="let terme of termes">
-    <a href="#searchbarTerme" (click)="chercheAvecTerme(terme.terme)">{{ terme.terme }} ({{terme.raffinement}})</a>
+    </div>
+    <ul class="list-group">
+      <li *ngFor="let terme of termesCompletion" class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="#searchbarTerme" (click)="chercheAvecTerme(terme.terme)">{{ terme.terme }} ({{terme.raffinement}})</a>
+      </li>
+    </ul>
+
+    <div class="row">
+      <div class="col-4 affichage" *ngFor="let terme of content">
+        <a href="#searchbarTerme" (click)="chercheAvecTerme(terme?.terme)">{{ terme?.terme }} ({{terme?.raffinement}})</a>
+      </div>
+    </div>
+    <div class="row">
+      <button class="show-more" (click)="getData()" [hidden]="termes.length == 0" [disabled]="counter>=termes.length">
+        Show more
+      </button>
+    </div>
   </div>
 </div>
+
+

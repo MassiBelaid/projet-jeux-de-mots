@@ -13,7 +13,7 @@ public class MassiFaitLeMalinController {
     @Autowired
     TermeRepository termeRepository;
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     @RequestMapping("/{chaine}")
     public List<Terme> getWithMultCrit(@PathVariable String chaine){
